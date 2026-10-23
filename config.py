@@ -28,7 +28,7 @@ class Settings(BaseSettings):
 
     db_path: Path = Path("data/music_bot.db")
     audio_dir: Path = Path("data/audio")
-    search_limit: int = Field(default=10, ge=1, le=25)
+    search_limit: int = Field(default=20, ge=1, le=25)
     itunes_country: str = Field(default="US", min_length=2, max_length=2)
     request_timeout: float = Field(default=20.0, gt=0, le=120)
     audio_cache_ttl: int = Field(default=86_400, ge=0, description="Seconds a downloaded preview stays cached")

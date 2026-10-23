@@ -26,10 +26,10 @@ from services.search import MusicSearch
 log = logging.getLogger(__name__)
 
 COMMANDS = [
-    BotCommand(command="start", description="Start the bot"),
-    BotCommand(command="search", description="Search for a song"),
-    BotCommand(command="history", description="Your recent downloads"),
-    BotCommand(command="help", description="How to use the bot"),
+    BotCommand(command="start", description="Botni ishga tushirish"),
+    BotCommand(command="search", description="Qo‘shiq qidirish"),
+    BotCommand(command="history", description="Oxirgi yuklamalarim"),
+    BotCommand(command="help", description="Yordam"),
 ]
 
 

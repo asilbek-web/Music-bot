@@ -7,9 +7,14 @@ third-party API keys required.
 ## Features
 
 - 🔎 Song search by title or artist (any plain message or `/search`)
-- 📄 Paginated inline results and per-track detail cards
+- 🎯 Relevance ranking: catalog matches are scored, deduplicated and filtered,
+  and Uzbek Cyrillic/Latin spellings are matched against Turkish spellings
+  (`chuqur` → `Çukur`)
+- ⚡ One tap: the best match is sent as audio right after the search
+- 🔢 Numbered results (1–10) with a number keypad and pagination
 - ⬇️ 30-second audio previews uploaded with title, artist and cover art
 - 🕘 Per-user download history with one-tap re-send
+- 🇺🇿 Uzbek interface
 - 🛅 Disk cache for previews, so re-sending a track doesn't download it again
 - 👮 Admin panel with live statistics, broadcasts, and ban/unban
 - 🐳 Docker image and SQLite storage (no external services)
@@ -84,7 +89,7 @@ All settings are read from environment variables or the `.env` file.
 | `ADMIN_IDS` | empty | Comma-separated user IDs allowed to use admin commands |
 | `DB_PATH` | `data/music_bot.db` | SQLite database location |
 | `AUDIO_DIR` | `data/audio` | Cache directory for downloaded previews |
-| `SEARCH_LIMIT` | `10` | Number of results per search (1–25) |
+| `SEARCH_LIMIT` | `20` | Number of results kept per search (1–25) |
 | `ITUNES_COUNTRY` | `US` | Storefront used for search, e.g. `US`, `GB`, `DE` |
 | `REQUEST_TIMEOUT` | `20` | Seconds before a catalog request times out |
 | `AUDIO_CACHE_TTL` | `86400` | Seconds a cached preview is reused (0 = keep forever) |
@@ -147,14 +152,17 @@ telegram_music_bot/
 ## How it works
 
 1. A text message reaches `handlers/user.py`, which calls `MusicSearch.search`.
-2. `MusicSearch` queries `https://itunes.apple.com/search` (song entity) and keeps
-   results that include a `previewUrl`.
-3. The results and a short search ID are stored in aiogram's FSM storage. Inline
-   buttons carry only the search ID and index, so callback data stays under
-   Telegram's 64-byte limit.
-4. Tapping **Get audio** downloads the preview through `AudioService` (size and
-   timeout guarded, cached by track ID), then uploads it with `send_audio`,
-   including the artwork as the thumbnail when Telegram accepts it.
+2. `MusicSearch` queries `https://itunes.apple.com/search` (song entity) with the
+   original query plus a transliterated variant, then scores every result
+   against the query (title, artist, album), penalises karaoke/cover/remix
+   uploads and drops anything that does not match at all.
+3. The ranked results and a short search ID are stored in aiogram's FSM storage.
+   Inline buttons carry only the search ID and index, so callback data stays
+   under Telegram's 64-byte limit.
+4. The best match is sent immediately; tapping a number sends that track.
+   `AudioService` downloads the preview (size and timeout guarded, cached by
+   track ID) and uploads it with `send_audio`, including the artwork as the
+   thumbnail when Telegram accepts it.
 5. The download is stored per user for `/history`.
 
 ## Notes and limitations
