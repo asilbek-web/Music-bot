@@ -50,6 +50,8 @@ docker run -d --name music-bot --env-file .env \
 The bot can serve a tiny HTTP health endpoint, enabled only when `PORT` is set.
 Render provides that variable automatically; local runs stay polling-only.
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/asilbek-web/Music-bot)
+
 1. Push this project to a GitHub repository (private works too).
 2. In the Render Dashboard choose **New → Blueprint**, select the repository and
    apply the included `render.yaml`. Render creates a **Free** Python web service
