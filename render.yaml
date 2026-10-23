@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: telegram-music-bot
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    healthCheckPath: /health
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: ADMIN_IDS
+        value: "7548105589"
+      - key: ITUNES_COUNTRY
+        value: US
+      - key: SEARCH_LIMIT
+        value: "10"
+      - key: LOG_LEVEL
+        value: INFO
